@@ -2,11 +2,27 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+const banners = [
+  "https://cdn.myanimelist.net/images/anime/1208/94745.jpg",
+  "https://cdn.myanimelist.net/images/anime/1337/99013.jpg",
+  "https://cdn.myanimelist.net/images/anime/1286/99889.jpg",
+  "https://cdn.myanimelist.net/images/anime/1015/138006.jpg",
+];
 
 export default function Home() {
 
+  const [randomBanner, setRandomBanner] = useState("");
+
+  useEffect(() => {
+    const random =
+      banners[Math.floor(Math.random() * banners.length)];
+
+    setRandomBanner(random);
+  }, []);
+
   const [animeList, setAnimeList] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+
 
   useEffect(() => {
 
@@ -48,35 +64,31 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section
-        className="relative h-[500px] rounded-3xl overflow-hidden flex items-center justify-center text-center mb-12 mt-8"
-      >
+      <section className="relative h-[500px] flex items-center justify-center text-center">
 
-        <img
-          src="https://images6.alphacoders.com/135/1353380.png"
-          alt="anime banner"
-          className="absolute w-full h-full object-cover"
-        />
+{randomBanner && (
+  <img
+    src={randomBanner}
+    alt="anime banner"
+    className="absolute w-full h-full object-cover opacity-40"
+  />
+)}
 
-        <div className="absolute inset-0 bg-black/70"></div>
+  <div className="relative z-10">
+    <h1 className="text-6xl font-extrabold text-purple-500">
+      DEVILANIME
+    </h1>
 
-        <div className="relative z-10 px-6">
+    <p className="mt-4 text-xl text-gray-300">
+      Explore trending anime and legendary classics.
+    </p>
 
-          <h2 className="text-6xl font-extrabold text-purple-500">
-            DEVILANIME
-          </h2>
+    <button className="mt-6 px-6 py-3 bg-purple-600 rounded-xl hover:bg-purple-700 transition">
+      Explore Anime
+    </button>
+  </div>
 
-          <p className="text-gray-300 mt-6 text-xl max-w-2xl">
-            Explore trending anime and legendary classics.
-          </p>
-
-          <button className="mt-8 bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl text-lg transition">
-            Explore Anime
-          </button>
-
-        </div>
-
-      </section>
+</section>
 
       {/* SEARCH */}
       <div className="flex justify-center mb-10">
@@ -126,36 +138,36 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {filteredAnime.slice(0, 12).map((anime: any) => (
-
+            
             <Link
-              key={anime.mal_id}
-              href={`/anime/${anime.mal_id}`}
-              className="bg-gray-900 rounded-xl overflow-hidden hover:scale-105 hover:shadow-purple-500/40 hover:shadow-2xl transition duration-300"
-            >
+  key={anime.mal_id}
+  href={`/anime/${anime.mal_id}`}
+  className="relative group bg-gray-900/80 backdrop-blur rounded-2xl overflow-hidden border border-gray-800 hover:border-purple-500 transition duration-300 hover:-translate-y-2 shadow-lg hover:shadow-purple-500/30"
+>
+  <img
+    src={anime.images.jpg.image_url}
+    alt={anime.title}
+    className="w-full h-80 object-cover group-hover:scale-110 transition duration-500"
+  />
 
-              <img
-                src={anime.images.jpg.image_url}
-                alt={anime.title}
-                className="w-full h-80 object-cover"
-              />
+  <div className="absolute top-3 right-3 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+  ⭐ {anime.score}
+</div>
 
-              <div className="p-4">
+  <div className="p-4">
+    <h2 className="text-xl font-bold">
+      {anime.title}
+    </h2>
 
-                <h2 className="text-xl font-bold">
-                  {anime.title}
-                </h2>
+    <p className="text-gray-400 mt-2">
+      ⭐ Score: {anime.score}
+    </p>
 
-                <p className="text-gray-400 mt-2">
-                  Score: {anime.score}
-                </p>
-
-                <p className="text-gray-500 text-sm mt-2 line-clamp-3">
-                  {anime.synopsis}
-                </p>
-
-              </div>
-
-            </Link>
+    <p className="text-gray-500 text-sm mt-2 line-clamp-3">
+      {anime.synopsis}
+    </p>
+  </div>
+</Link>
 
           ))}
 
