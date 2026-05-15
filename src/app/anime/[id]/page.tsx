@@ -49,15 +49,23 @@ export default async function AnimePage({ params }: Props) {
 
           </div>
 
-          {anime.trailer?.url && (
-            <a
-              href={anime.trailer.url}
-              target="_blank"
-              className="inline-block mt-8 bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-xl transition"
-            >
-              ▶ Watch Trailer
-            </a>
-          )}
+          {anime.trailer?.embed_url && (
+  <div className="mt-10">
+
+    <h2 className="text-3xl font-bold mb-4 text-purple-500">
+      Trailer
+    </h2>
+
+    <iframe
+  src={anime.trailer.embed_url}
+  width="100%"
+  height="500"
+  allowFullScreen
+  className="rounded-2xl border border-purple-500"
+></iframe>
+
+  </div>
+)}
 
         </div>
 

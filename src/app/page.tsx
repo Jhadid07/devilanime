@@ -26,24 +26,22 @@ export default function Home() {
 
   useEffect(() => {
 
-    async function fetchAnime() {
+  async function fetchAnime() {
 
-      const res = await fetch(
-        "https://api.jikan.moe/v4/top/anime"
-      );
+    const url = search
+      ? `https://api.jikan.moe/v4/anime?q=${search}`
+      : "https://api.jikan.moe/v4/top/anime";
 
-      const data = await res.json();
+    const res = await fetch(url);
 
-      setAnimeList(data.data);
-    }
+    const data = await res.json();
 
-    fetchAnime();
+    setAnimeList(data.data || []);
+  }
 
-  }, []);
+  fetchAnime();
 
-  const filteredAnime = animeList.filter((anime) =>
-    anime.title.toLowerCase().includes(search.toLowerCase())
-  );
+}, [search]);
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
@@ -137,39 +135,43 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          {filteredAnime.slice(0, 12).map((anime: any) => (
-            
-            <Link
-  key={anime.mal_id}
-  href={`/anime/${anime.mal_id}`}
-  className="relative group bg-gray-900/80 backdrop-blur rounded-2xl overflow-hidden border border-gray-800 hover:border-purple-500 transition duration-300 hover:-translate-y-2 shadow-lg hover:shadow-purple-500/30"
->
-  <img
-    src={anime.images.jpg.image_url}
-    alt={anime.title}
-    className="w-full h-80 object-cover group-hover:scale-110 transition duration-500"
-  />
+  {(animeList || []).slice(0, 24).map((anime: any, index: number) => (
 
-  <div className="absolute top-3 right-3 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-  ⭐ {anime.score}
-</div>
+    <Link
+      key={`${anime.mal_id}-${index}`}
+      href={`/anime/${anime.mal_id}`}
+      className="relative group bg-gray-900/80 backdrop-blur rounded-2xl overflow-hidden border border-gray-800 hover:border-purple-500"
+    >
 
-  <div className="p-4">
-    <h2 className="text-xl font-bold">
-      {anime.title}
-    </h2>
+      <img
+        src={anime.images.jpg.image_url}
+        alt={anime.title}
+        className="w-full h-80 object-cover group-hover:scale-110 transition duration-500"
+      />
 
-    <p className="text-gray-400 mt-2">
-      ⭐ Score: {anime.score}
-    </p>
+      <div className="absolute top-3 right-3 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+        ⭐ {anime.score}
+      </div>
 
-    <p className="text-gray-500 text-sm mt-2 line-clamp-3">
-      {anime.synopsis}
-    </p>
-  </div>
-</Link>
+      <div className="p-4">
 
-          ))}
+        <h2 className="text-xl font-bold">
+          {anime.title}
+        </h2>
+
+        <p className="text-gray-400 mt-2">
+          ⭐ Score: {anime.score}
+        </p>
+
+        <p className="text-gray-500 text-sm mt-2 line-clamp-3">
+          {anime.synopsis}
+        </p>
+
+      </div>
+
+    </Link>
+
+  ))}
 
         </div>
 
