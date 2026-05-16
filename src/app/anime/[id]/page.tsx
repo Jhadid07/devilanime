@@ -30,6 +30,7 @@ export default async function AnimePage({ params }: Props) {
   const recommendations = await getRecommendations(id);
 
   return (
+
     <main className="min-h-screen bg-black text-white p-10">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
 

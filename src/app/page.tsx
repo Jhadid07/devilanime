@@ -14,11 +14,22 @@ export default function Home() {
   const [randomBanner, setRandomBanner] = useState("");
 
   useEffect(() => {
+
+  const changeBanner = () => {
+
     const random =
       banners[Math.floor(Math.random() * banners.length)];
 
     setRandomBanner(random);
-  }, []);
+  };
+
+  changeBanner();
+
+  const interval = setInterval(changeBanner, 5000);
+
+  return () => clearInterval(interval);
+
+}, []);
 
   const [animeList, setAnimeList] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -42,6 +53,25 @@ export default function Home() {
   fetchAnime();
 
 }, [search]);
+
+const [airingAnime, setAiringAnime] = useState<any[]>([]);
+
+useEffect(() => {
+
+  async function fetchAiringAnime() {
+
+    const res = await fetch(
+      "https://api.jikan.moe/v4/top/anime?filter=airing"
+    );
+
+    const data = await res.json();
+
+    setAiringAnime(data.data || []);
+  }
+
+  fetchAiringAnime();
+
+}, []);
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
@@ -160,6 +190,48 @@ export default function Home() {
           </h3>
 
           <p className="text-gray-300 mt-2">
+            ⭐ {anime.score}
+          </p>
+
+        </div>
+
+      </Link>
+
+    ))}
+
+  </div>
+
+</section>
+
+<section className="mb-16">
+
+  <h2 className="text-4xl font-bold text-red-500 mb-6">
+    Top Airing Anime
+  </h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    {airingAnime.slice(0, 8).map((anime: any, index: number) => (
+
+      <Link
+        key={`airing-${anime.mal_id}-${index}`}
+        href={`/anime/${anime.mal_id}`}
+        className="bg-gray-900 rounded-2xl overflow-hidden hover:scale-105 transition"
+      >
+
+        <img
+          src={anime.images.jpg.large_image_url}
+          alt={anime.title}
+          className="w-full h-80 object-cover"
+        />
+
+        <div className="p-4">
+
+          <h3 className="font-bold">
+            {anime.title}
+          </h3>
+
+          <p className="text-gray-400 mt-2">
             ⭐ {anime.score}
           </p>
 
