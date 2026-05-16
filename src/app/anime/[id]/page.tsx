@@ -134,9 +134,13 @@ export default async function AnimePage({ params }: Props) {
           {ep.title}
         </p>
 
-        <button className="bg-purple-600 px-5 py-2 rounded-xl hover:bg-purple-700 transition mt-4">
+  <a
+  href={`https://www.youtube.com/results?search_query=${anime.title}+episode+${ep.mal_id}`}
+  target="_blank"
+  className="bg-purple-600 px-5 py-2 rounded-xl hover:bg-purple-700 transition"
+>
   Watch Now
-</button>
+</a>
 
       </div>
 

@@ -32,6 +32,8 @@ export default function Home() {
 }, []);
 
   const [animeList, setAnimeList] = useState<any[]>([]);
+  const [airingAnime, setAiringAnime] = useState<any[]>([]);
+const [upcomingAnime, setUpcomingAnime] = useState<any[]>([]);
   const [search, setSearch] = useState("");
 
 
@@ -48,30 +50,27 @@ export default function Home() {
     const data = await res.json();
 
     setAnimeList(data.data || []);
+
+    const airingRes = await fetch(
+  "https://api.jikan.moe/v4/top/anime?filter=airing"
+);
+
+const airingData = await airingRes.json();
+
+setAiringAnime(airingData.data || []);
+
+const upcomingRes = await fetch(
+  "https://api.jikan.moe/v4/seasons/upcoming"
+);
+
+const upcomingData = await upcomingRes.json();
+
+setUpcomingAnime(upcomingData.data || []);
   }
 
   fetchAnime();
 
 }, [search]);
-
-const [airingAnime, setAiringAnime] = useState<any[]>([]);
-
-useEffect(() => {
-
-  async function fetchAiringAnime() {
-
-    const res = await fetch(
-      "https://api.jikan.moe/v4/top/anime?filter=airing"
-    );
-
-    const data = await res.json();
-
-    setAiringAnime(data.data || []);
-  }
-
-  fetchAiringAnime();
-
-}, []);
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
@@ -205,46 +204,6 @@ useEffect(() => {
 
 <section className="mb-16">
 
-  <h2 className="text-4xl font-bold text-red-500 mb-6">
-    Top Airing Anime
-  </h2>
-
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-
-    {airingAnime.slice(0, 8).map((anime: any, index: number) => (
-
-      <Link
-        key={`airing-${anime.mal_id}-${index}`}
-        href={`/anime/${anime.mal_id}`}
-        className="bg-gray-900 rounded-2xl overflow-hidden hover:scale-105 transition"
-      >
-
-        <img
-          src={anime.images.jpg.large_image_url}
-          alt={anime.title}
-          className="w-full h-80 object-cover"
-        />
-
-        <div className="p-4">
-
-          <h3 className="font-bold">
-            {anime.title}
-          </h3>
-
-          <p className="text-gray-400 mt-2">
-            ⭐ {anime.score}
-          </p>
-
-        </div>
-
-      </Link>
-
-    ))}
-
-  </div>
-
-</section>
-
 <h2 className="text-3xl font-bold mb-6 text-purple-500">
           Top Rated Anime
         </h2>
@@ -292,6 +251,84 @@ useEffect(() => {
         </div>
 
       </section>
+
+      <section className="mt-20">
+
+  <h2 className="text-3xl font-bold mb-6 text-purple-500">
+    Top Airing Anime
+  </h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    {airingAnime.slice(0, 8).map((anime: any, index: number) => (
+
+      <Link
+        key={`${anime.mal_id}-${index}`}
+        href={`/anime/${anime.mal_id}`}
+        className="bg-gray-900 rounded-2xl overflow-hidden hover:scale-105 transition"
+      >
+
+        <img
+          src={anime.images.jpg.image_url}
+          alt={anime.title}
+          className="w-full h-72 object-cover"
+        />
+
+        <div className="p-4">
+
+          <h3 className="font-bold">
+            {anime.title}
+          </h3>
+
+        </div>
+
+      </Link>
+
+    ))}
+
+  </div>
+
+</section>
+
+<section className="mt-20">
+
+  <h2 className="text-3xl font-bold mb-6 text-purple-500">
+    Upcoming Anime
+  </h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    {upcomingAnime.slice(0, 8).map((anime: any, index: number) => (
+
+      <Link
+        key={`${anime.mal_id}-${index}`}
+        href={`/anime/${anime.mal_id}`}
+        className="bg-gray-900 rounded-2xl overflow-hidden hover:scale-105 transition"
+      >
+
+        <img
+          src={anime.images.jpg.image_url}
+          alt={anime.title}
+          className="w-full h-72 object-cover"
+        />
+
+        <div className="p-4">
+
+          <h3 className="font-bold">
+            {anime.title}
+          </h3>
+
+        </div>
+
+      </Link>
+
+    ))}
+
+  </div>
+
+</section>
+
+</section>
 
     </main>
   );
