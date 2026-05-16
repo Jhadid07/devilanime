@@ -122,9 +122,9 @@ export default async function AnimePage({ params }: Props) {
     {episodes.slice(0, 12).map((ep: any) => (
 
       <div
-        key={ep.mal_id}
-        className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-purple-500 transition"
-      >
+  key={ep.mal_id}
+  className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-purple-500 transition flex items-center justify-between"
+>
 
         <h3 className="text-xl font-bold">
           Episode {ep.mal_id}
@@ -133,6 +133,10 @@ export default async function AnimePage({ params }: Props) {
         <p className="text-gray-400 mt-2">
           {ep.title}
         </p>
+
+        <button className="bg-purple-600 px-5 py-2 rounded-xl hover:bg-purple-700 transition mt-4">
+  Watch Now
+</button>
 
       </div>
 
