@@ -23,11 +23,23 @@ async function getRecommendations(id: string) {
   return data.data;
 }
 
+async function getEpisodes(id: string) {
+  const res = await fetch(
+    `https://api.jikan.moe/v4/anime/${id}/episodes`
+  );
+
+  const data = await res.json();
+
+  return data.data;
+}
+
 export default async function AnimePage({ params }: Props) {
   const { id } = await params;
 
   const anime = await getAnime(id);
   const recommendations = await getRecommendations(id);
+
+  const episodes = await getEpisodes(id);
 
   return (
 
@@ -98,6 +110,37 @@ export default async function AnimePage({ params }: Props) {
         </div>
 
       </div>
+
+      <div className="max-w-6xl mx-auto mt-20">
+
+  <h2 className="text-4xl font-bold text-purple-500 mb-8">
+    Episodes
+  </h2>
+
+  <div className="grid gap-4">
+
+    {episodes.slice(0, 12).map((ep: any) => (
+
+      <div
+        key={ep.mal_id}
+        className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-purple-500 transition"
+      >
+
+        <h3 className="text-xl font-bold">
+          Episode {ep.mal_id}
+        </h3>
+
+        <p className="text-gray-400 mt-2">
+          {ep.title}
+        </p>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
 
       <div className="max-w-6xl mx-auto mt-20">
 
