@@ -129,7 +129,51 @@ export default function Home() {
       {/* TOP ANIME */}
       <section>
 
-        <h2 className="text-3xl font-bold mb-6 text-purple-500">
+        <section className="mb-16">
+
+  <h2 className="text-4xl font-bold text-purple-500 mb-6">
+    Trending Now
+  </h2>
+
+  <div className="flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
+
+    {animeList.slice(0, 10).map((anime: any, index: number) => (
+
+      <Link
+        key={`trending-${anime.mal_id}-${index}`}
+        href={`/anime/${anime.mal_id}`}
+        className="min-w-[300px] relative rounded-2xl overflow-hidden group"
+      >
+
+        <img
+          src={anime.images.jpg.large_image_url}
+          alt={anime.title}
+          className="w-[300px] h-[420px] object-cover group-hover:scale-110 transition duration-500"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+
+        <div className="absolute bottom-0 p-4">
+
+          <h3 className="text-2xl font-bold">
+            {anime.title}
+          </h3>
+
+          <p className="text-gray-300 mt-2">
+            ⭐ {anime.score}
+          </p>
+
+        </div>
+
+      </Link>
+
+    ))}
+
+  </div>
+
+</section>
+
+<h2 className="text-3xl font-bold mb-6 text-purple-500">
           Top Rated Anime
         </h2>
 
