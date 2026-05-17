@@ -116,19 +116,43 @@ export default function AnimePage() {
 
   return (
 
-    <main className="min-h-screen bg-black text-white p-10">
+    <main className="min-h-screen bg-black text-white">
+
+  <div className="relative h-[500px]">
+
+    <img
+      src={anime.images.jpg.large_image_url}
+      alt={anime.title}
+      className="absolute inset-0 w-full h-full object-cover opacity-30"
+    />
+
+    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
+    <div className="absolute bottom-10 left-10">
+
+      <h1 className="text-6xl font-bold text-purple-500">
+        {anime.title}
+      </h1>
+
+      <p className="mt-4 text-xl text-gray-300">
+        ⭐ {anime.score} • {anime.year}
+      </p>
+
+    </div>
+
+  </div>
+
+  <div className="p-10">
+
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
 
         <img
           src={anime.images.jpg.large_image_url}
           alt={anime.title}
-          className="w-full rounded-2xl shadow-lg"
+          className="w-full rounded-2xl shadow-2xl border border-purple-500"
         />
 
         <div>
-          <h1 className="text-5xl font-bold text-purple-500">
-            {anime.title}
-          </h1>
 
           <button
   onClick={toggleFavorite}
@@ -269,6 +293,8 @@ export default function AnimePage() {
     ))}
 
   </div>
+
+</div>
 
 </div>
 

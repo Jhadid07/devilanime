@@ -41,9 +41,24 @@ export default function FavoritesPage() {
 
         {favorites.length === 0 ? (
 
-          <div className="text-gray-400 text-xl">
-            No favorites yet.
-          </div>
+          <div className="flex flex-col items-center justify-center py-20">
+
+  <h2 className="text-3xl font-bold text-gray-400">
+    No Favorites Yet
+  </h2>
+
+  <p className="mt-4 text-gray-500">
+    Add anime to build your collection.
+  </p>
+
+  <Link
+    href="/"
+    className="mt-8 bg-purple-600 px-6 py-3 rounded-xl hover:bg-purple-700"
+  >
+    Explore Anime
+  </Link>
+
+</div>
 
         ) : (
 
@@ -52,9 +67,9 @@ export default function FavoritesPage() {
             {favorites.map((anime: any, index: number) => (
 
               <div
-                key={`${anime.mal_id}-${index}`}
-                className="bg-gray-900 rounded-2xl overflow-hidden"
-              >
+  key={`${anime.mal_id}-${index}`}
+  className="relative bg-gray-900 rounded-2xl overflow-hidden hover:scale-105 hover:-translate-y-1 transition duration-300 border border-gray-800 hover:border-purple-500"
+>
 
                 <Link href={`/anime/${anime.mal_id}`}>
 
@@ -63,6 +78,10 @@ export default function FavoritesPage() {
                     alt={anime.title}
                     className="w-full h-80 object-cover hover:scale-105 transition"
                   />
+
+                  <div className="absolute top-3 right-3 bg-purple-600 px-3 py-1 rounded-full text-sm">
+  ⭐ {anime.score}
+</div>
 
                 </Link>
 
