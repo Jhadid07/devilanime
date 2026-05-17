@@ -1,45 +1,118 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-type Props = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+export default function AnimePage() {
 
-async function getAnime(id: string) {
-  const res = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+  const params = useParams();
 
-  const data = await res.json();
-  return data.data;
-}
+  const [anime, setAnime] = useState<any>(null);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [episodes, setEpisodes] = useState<any[]>([]);
+  const [favorite, setFavorite] = useState(false);
 
-async function getRecommendations(id: string) {
-  const res = await fetch(
-    `https://api.jikan.moe/v4/anime/${id}/recommendations`
+  useEffect(() => {
+
+    async function fetchAnime() {
+
+      const animeRes = await fetch(
+        `https://api.jikan.moe/v4/anime/${params.id}`
+      );
+
+      const animeData = await animeRes.json();
+
+      setAnime(animeData.data);
+
+      const recRes = await fetch(
+        `https://api.jikan.moe/v4/anime/${params.id}/recommendations`
+      );
+
+      const recData = await recRes.json();
+
+      setRecommendations(recData.data || []);
+
+      const epRes = await fetch(
+        `https://api.jikan.moe/v4/anime/${params.id}/episodes`
+      );
+
+      const epData = await epRes.json();
+
+      setEpisodes(epData.data || []);
+
+      const favorites =
+        JSON.parse(localStorage.getItem("favorites") || "[]");
+
+      const exists = favorites.find(
+        (fav: any) => fav.mal_id === animeData.data.mal_id
+      );
+
+      setFavorite(!!exists);
+    }
+
+    fetchAnime();
+
+  }, [params.id]);
+
+  function toggleFavorite() {
+
+    const favorites =
+      JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if (favorite) {
+
+      const updated = favorites.filter(
+        (fav: any) => fav.mal_id !== anime.mal_id
+      );
+
+      localStorage.setItem(
+        "favorites",
+        JSON.stringify(updated)
+      );
+
+      setFavorite(false);
+
+    } else {
+
+      favorites.push(anime);
+
+      localStorage.setItem(
+        "favorites",
+        JSON.stringify(favorites)
+      );
+
+      setFavorite(true);
+    }
+  }
+
+  if (!anime) {
+  return (
+    <main className="min-h-screen bg-black text-white p-10 animate-pulse">
+
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
+
+        <div className="bg-gray-800 h-[600px] rounded-2xl"></div>
+
+        <div className="space-y-6">
+
+          <div className="bg-gray-800 h-14 rounded w-3/4"></div>
+
+          <div className="bg-gray-800 h-10 rounded w-1/3"></div>
+
+          <div className="bg-gray-800 h-40 rounded"></div>
+
+          <div className="bg-gray-800 h-8 rounded w-1/2"></div>
+
+          <div className="bg-gray-800 h-8 rounded w-2/3"></div>
+
+        </div>
+
+      </div>
+
+    </main>
   );
-
-  const data = await res.json();
-
-  return data.data;
 }
-
-async function getEpisodes(id: string) {
-  const res = await fetch(
-    `https://api.jikan.moe/v4/anime/${id}/episodes`
-  );
-
-  const data = await res.json();
-
-  return data.data;
-}
-
-export default async function AnimePage({ params }: Props) {
-  const { id } = await params;
-
-  const anime = await getAnime(id);
-  const recommendations = await getRecommendations(id);
-
-  const episodes = await getEpisodes(id);
 
   return (
 
@@ -56,6 +129,17 @@ export default async function AnimePage({ params }: Props) {
           <h1 className="text-5xl font-bold text-purple-500">
             {anime.title}
           </h1>
+
+          <button
+  onClick={toggleFavorite}
+  className={`mt-6 px-6 py-3 rounded-xl font-bold transition ${
+    favorite
+      ? "bg-red-600 hover:bg-red-700"
+      : "bg-purple-600 hover:bg-purple-700"
+  }`}
+>
+  {favorite ? "❤️ Added to Favorites" : "🤍 Add to Favorites"}
+</button>
 
           <p className="text-gray-400 mt-4">
             {anime.synopsis}

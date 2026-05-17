@@ -35,21 +35,33 @@ export default function Home() {
   const [airingAnime, setAiringAnime] = useState<any[]>([]);
 const [upcomingAnime, setUpcomingAnime] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [genre, setGenre] = useState("");
+  const [page, setPage] = useState(1);
 
 
   useEffect(() => {
 
   async function fetchAnime() {
 
-    const url = search
-      ? `https://api.jikan.moe/v4/anime?q=${search}`
-      : "https://api.jikan.moe/v4/top/anime";
+    const url = debouncedSearch
+  ? `https://api.jikan.moe/v4/anime?q=${debouncedSearch}&page=${page}`
+  : genre
+  ? `https://api.jikan.moe/v4/anime?genres=${genre}&page=${page}`
+  : `https://api.jikan.moe/v4/top/anime?page=${page}`;
 
     const res = await fetch(url);
 
     const data = await res.json();
 
-    setAnimeList(data.data || []);
+    if (page === 1) {
+  setAnimeList(data.data || []);
+} else {
+  setAnimeList((prev) => [
+    ...prev,
+    ...(data.data || [])
+  ]);
+}
 
     const airingRes = await fetch(
   "https://api.jikan.moe/v4/top/anime?filter=airing"
@@ -70,7 +82,23 @@ setUpcomingAnime(upcomingData.data || []);
 
   fetchAnime();
 
+}, [debouncedSearch, genre, page]);
+
+useEffect(() => {
+
+  const timer = setTimeout(() => {
+
+    setDebouncedSearch(search);
+
+  }, 500);
+
+  return () => clearTimeout(timer);
+
 }, [search]);
+
+useEffect(() => {
+  setPage(1);
+}, [debouncedSearch, genre]);
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
@@ -78,17 +106,31 @@ setUpcomingAnime(upcomingData.data || []);
       {/* NAVBAR */}
       <nav className="flex items-center justify-between border-b border-gray-800 pb-4">
 
-        <h1 className="text-3xl font-bold text-purple-500">
-          DEVILANIME
-        </h1>
+  <h1 className="text-3xl font-bold text-purple-500">
+    DEVILANIME
+  </h1>
 
-        <div className="flex gap-6 text-gray-300">
-          <a href="#">Home</a>
-          <a href="#">Trending</a>
-          <a href="#">Popular</a>
-        </div>
+  <div className="hidden md:flex gap-6 text-gray-300 items-center">
 
-      </nav>
+    <Link href="/">
+      Home
+    </Link>
+
+    <a href="#trending">
+      Trending
+    </a>
+
+    <a href="#toprated">
+      Top Rated
+    </a>
+
+    <Link href="/favorites">
+      Favorites
+    </Link>
+
+  </div>
+
+</nav>
 
       {/* HERO */}
       <section className="relative h-[500px] flex items-center justify-center text-center">
@@ -133,32 +175,47 @@ setUpcomingAnime(upcomingData.data || []);
       {/* GENRES */}
       <div className="flex flex-wrap justify-center gap-4 mb-10">
 
-        <button className="bg-purple-600 px-5 py-2 rounded-xl">
-          All
-        </button>
+        <button
+  onClick={() => setGenre("")}
+  className="bg-purple-600 px-5 py-2 rounded-xl"
+>
+  All
+</button>
 
-        <button className="bg-gray-900 px-5 py-2 rounded-xl">
-          Action
-        </button>
+        <button
+  onClick={() => setGenre("1")}
+  className="bg-gray-900 px-5 py-2 rounded-xl"
+>
+  Action
+</button>
 
-        <button className="bg-gray-900 px-5 py-2 rounded-xl">
-          Romance
-        </button>
+        <button
+  onClick={() => setGenre("22")}
+  className="bg-gray-900 px-5 py-2 rounded-xl"
+>
+  Romance
+</button>
 
-        <button className="bg-gray-900 px-5 py-2 rounded-xl">
-          Fantasy
-        </button>
+        <button
+  onClick={() => setGenre("10")}
+  className="bg-gray-900 px-5 py-2 rounded-xl"
+>
+  Fantasy
+</button>
 
-        <button className="bg-gray-900 px-5 py-2 rounded-xl">
-          Comedy
-        </button>
+        <button
+  onClick={() => setGenre("4")}
+  className="bg-gray-900 px-5 py-2 rounded-xl"
+>
+  Comedy
+</button>
 
       </div>
 
       {/* TOP ANIME */}
       <section>
 
-        <section className="mb-16">
+        <section id="trending" className="mb-16">
 
   <h2 className="text-4xl font-bold text-purple-500 mb-6">
     Trending Now
@@ -202,7 +259,7 @@ setUpcomingAnime(upcomingData.data || []);
 
 </section>
 
-<section className="mb-16">
+<section id="toprated" className="mb-16">
 
 <h2 className="text-3xl font-bold mb-6 text-purple-500">
           Top Rated Anime
@@ -210,7 +267,7 @@ setUpcomingAnime(upcomingData.data || []);
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-  {(animeList || []).slice(0, 24).map((anime: any, index: number) => (
+  {animeList.map((anime: any, index: number) => (
 
     <Link
       key={`${anime.mal_id}-${index}`}
@@ -249,6 +306,17 @@ setUpcomingAnime(upcomingData.data || []);
   ))}
 
         </div>
+
+        <div className="flex justify-center mt-10">
+
+  <button
+    onClick={() => setPage(page + 1)}
+    className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-xl font-bold transition"
+  >
+    Load More
+  </button>
+
+</div>
 
       </section>
 
